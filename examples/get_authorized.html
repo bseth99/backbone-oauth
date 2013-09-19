@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+   <title>OAuth Backbone Plugin</title>
+
+</head>
+<body>
+
+<div>
+   Edit the code to put real keys in to the options hash
+   and point to an actual end-point.  Open you're console
+   to inspect the request and response.
+</div>
+
+<script src="../external/jquery-1.9.1.js"></script>
+<script src="../external/underscore.js" ></script>
+<script src="../external/backbone.js" ></script>
+<script src="../external/base.js" ></script>
+<script src="../external/simple-oauth.js" ></script>
+<script src="../src/backbone-oauth.js" ></script>
+<script>
+
+$(function() {
+
+   /***
+   *  Setup an authentication object for a service end-point
+   *  more then one can be created per page.  The namespace
+   *  determines the identity of each service.  Its expected
+   *  that all calls to the API will be prepended with the
+   *  namespace as part of the path.
+   *
+   *  For example, if you want to use the Twitter API, you might use
+   *  "twitter" as the namespace and ensure all calls are
+   *  made with "/twitter/..." as the path.  Its expected that
+   *  all API calls are from the same host using a reverse proxy
+   *  since its impossible to set the Authorization header on
+   *  a cross-site AJAX call.
+   */
+   var api = new Backbone.OAuth.v1revA({
+
+         namespace: 'api',
+
+         keys: {
+            consumer_key: 'R1Y3QW1L15uw8X0t5ddJbQ',
+            consumer_secret: '7xKJvmTCKm97WBQQllji9Oz8DRQHJoN1svhiY8vo'
+         },
+
+         urls: {
+            request: '/api/oauth/request_token',
+            authorize: 'test_authorize.html',
+            access: '/api/oauth/access_token',
+            renew: '/api/oauth/renew_token'
+         }
+      });
+
+   /***
+   *  Ready signals the completion of authorizing the usage of
+   *  the resource.  The object will now return true when the
+   *  authorized() function is called.
+   *
+   */
+   api.on('oauth:ready', function ( data ) {
+      });
+
+
+   /***
+   *  Any time the service responds with an unauthorized response
+   *  the state of the authorization is reset and must be performed
+   *  again to attempt to negotiate a usable set of tokens.
+   *
+   */
+   api.on('oauth:reset', function ( data ) {
+      });
+
+
+   /***
+   *  Any problem other than an unauthorized response
+   *  will raise the failure event.
+   *
+   */
+   api.on('oauth:failure', function ( data ) {
+      });
+
+
+   /***
+   *  This runs the authorization negotiation process
+   *  from beginning to end.  Including redirecting the
+   *  user to the authentication site and handling the
+   *  return back after completion.
+   *
+   */
+   api.authorize();
+
+});
+</script>
+</body>
+</html>

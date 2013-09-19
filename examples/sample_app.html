@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+   <title>OAuth Backbone Plugin</title>
+
+</head>
+<body>
+
+<div>
+   Edit the code to put real keys in to the options hash
+   and point to an actual end-point.  Open you're console
+   to inspect the request and response.
+</div>
+
+<script src="../external/jquery.js"></script>
+<script src="../external/underscore.js" ></script>
+<script src="../external/backbone.js" ></script>
+<script src="../external/base.js" ></script>
+<script src="../external/simple-oauth.js" ></script>
+<script src="../src/backbone-oauth.js" ></script>
+<script>
+
+$(function() {
+
+
+   var auth = new Backbone.OAuth({
+
+         site: 'https://api.login.yahoo.com/oauth/v2',
+
+         namespace: 'yahoo/oauth',
+
+         keys: {
+            consumer_key: 'dj0yJmk9RlR3eFFUNGR0Y2gzJmQ9WVdrOU5ubHhWMDVETTJVbWNHbzlOakV6T1RBME5UWXkmcz1jb25zdW1lcnNlY3JldCZ4PTQ0',
+            consumer_secret: '70cdc0feee8f9bc8bdb7318d48d621f7127247fe'
+         },
+
+         urls: {
+            request: '/yahoo/oauth/get_request_token',
+            authorize: 'https://api.login.yahoo.com/oauth/v2/request_auth',
+            access: '/yahoo/oauth/get_token'
+         },
+
+         adapter: new Backbone.OAuth.Adapters.v1revA({ saved_params: ['yahoo_guid'] })
+      });
+
+   auth.on('oauth:ready', function ( data ) {
+         console.log(data);
+      });
+
+   auth.on('oauth:reset', function ( ) {
+
+         console.log('auth resetted');
+      });
+
+   auth.on('oauth:failure', function ( ) {
+         console.log('auth sadness');
+      });
+
+
+   var social = new Backbone.OAuth({
+
+         site: 'http://social.yahooapis.com/v1/user',
+
+         namespace: 'yahoo/social',
+
+         keys: {
+            consumer_key: 'dj0yJmk9RlR3eFFUNGR0Y2gzJmQ9WVdrOU5ubHhWMDVETTJVbWNHbzlOakV6T1RBME5UWXkmcz1jb25zdW1lcnNlY3JldCZ4PTQ0',
+            consumer_secret: '70cdc0feee8f9bc8bdb7318d48d621f7127247fe'
+         },
+
+         adapter: new Backbone.OAuth.Adapters.v1revA({ saved_params: ['yahoo_guid'] })
+      });
+
+   social.on('oauth:ready', function ( data ) {
+         console.log(data);
+
+      });
+
+   social.on('oauth:reset', function ( ) {
+         auth.authorize();
+         console.log('social resetted');
+      });
+
+   social.on('oauth:failure', function ( ) {
+         console.log('social sadness');
+      });
+
+   var data = social.adapter.data();
+   contact = new Backbone.Collection([],{
+
+      url: '/yahoo/social/'+data.yahoo_guid+'/contacts',
+
+      sync: function(method, model, options) {
+
+         options.contentType = 'application/json';
+
+         return Backbone.sync(method, model, options);
+      }
+
+     });
+
+   contact.fetch();
+
+});
+</script>
+</body>
+</html>

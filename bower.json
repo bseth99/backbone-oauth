@@ -1,0 +1,20 @@
+{
+  "name": "backbone-oauth",
+  "version": "0.0.3",
+  "ignore": [
+    "src",
+    "tests",
+    "external",
+    "examples",
+    ".jshintrc",
+    ".gitignore",
+    "build.sh"
+  ],
+  "dependencies": {
+    "simple-oauth-js": "https://github.com/bseth99/simple-oauth-js.git",
+    "basejs": "https://github.com/bseth99/basejs.git",
+    "jquery": "latest",
+    "backbone-amd": "latest",
+    "lodash": "latest"
+  }
+}

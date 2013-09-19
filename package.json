@@ -1,0 +1,32 @@
+{
+   "name": "Backbone-OAuth",
+   "title": "Implement OAuth authorization flow and add verification headers",
+   "description": "Seemlessly adds OAuth handling abilities to Backbone collections and models",
+   "version": "0.0.3",
+   "author": {
+      "name": "Ben Olson",
+      "url": "http://bseth99.github.com/"
+   },
+   "homepage": "https://github.com/bseth99/backbone-oauth",
+   "repository": {
+      "type": "git",
+      "url": "git://github.com/bseth99/backbone-oauth.git"
+   },
+   "bugs": {
+      "url" : "http://github.com/bseth99/backbone-oauth/issues"
+   },
+   "licenses": [
+      {
+         "type": "MIT",
+         "url": "https://github.com/bseth99/backbone-oauth/blob/master/MIT-LICENSE"
+      }
+   ],
+   "dependencies": {},
+   "devDependencies": {
+      "grunt": "0.4.x",
+      "grunt-contrib-jshint": "0.6.x",
+      "grunt-contrib-uglify": "0.1.x",
+      "grunt-contrib-concat": "0.1.x"
+   },
+   "keywords": []
+}

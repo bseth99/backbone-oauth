@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+   <title>Login and Authorize</title>
+
+</head>
+<body>
+
+<script src="../external/jquery-1.9.1.js"></script>
+<script src="../external/underscore.js" ></script>
+<script src="../external/backbone.js" ></script>
+<script src="../external/base.js" ></script>
+<script src="../external/simple-oauth.js" ></script>
+<script src="../src/backbone-oauth.js" ></script>
+
+<div>
+   Click the button to "login" and authorize the service
+</div>
+<button id="accept">Login and Authorize</button>
+<button id="decline">Decline</button>
+
+<script>
+
+   var url = URI.parseUri(location.href),
+       params = URI.parseQuery(url.query),
+       token = params.oauth_token;
+
+   var options = {
+         consumer_key: 'R1Y3QW1L15uw8X0t5ddJbQ',
+         consumer_secret: '7xKJvmTCKm97WBQQllji9Oz8DRQHJoN1svhiY8vo'
+    };
+
+   $.ajaxSetup({
+         oauthOptions: options,
+         //oauthProxyPath: 'http://192.168.56.101:9292',
+         oauthRewrite: '/api'
+      });
+
+   function login ( cb ) {
+      $.ajax({
+             url: "/api/oauth/authenticate",
+             type: "POST",
+             processData: false,
+             data: URI.queryString({ temp_token: token, user_name: 'test', user_pass: 'password' })
+           })
+          .done( function (data, textStatus, jqXHR) {
+
+                  cb();
+
+             })
+          .fail( function (jqXHR, textStatus, errorThrown) {
+                  console.log('login Fail: ' + jqXHR.status);
+             });
+   }
+
+   function authorize ( cb ) {
+      $.ajax({
+             url: "/api/oauth/authorize",
+             type: "POST",
+             processData: false,
+             data: URI.queryString({ temp_token: token })
+           })
+          .done( function (data, textStatus, jqXHR) {
+
+                  cb(URI.parseQuery(data));
+
+             })
+          .fail( function (jqXHR, textStatus, errorThrown) {
+                  console.log('authorize Fail: ' + jqXHR.status);
+             });
+   }
+
+
+   function decline ( cb ) {
+      $.ajax({
+             url: "/api/oauth/decline",
+             type: "POST",
+             processData: false,
+             data: URI.queryString({ temp_token: token })
+           })
+          .done( function (data, textStatus, jqXHR) {
+
+                  cb(URI.parseQuery(data));
+
+             })
+          .fail( function (jqXHR, textStatus, errorThrown) {
+                  console.log('declining Fail: ' + jqXHR.status);
+             });
+   }
+
+   var goBack = function ( params ) {
+
+      var url = URI.parseUri(params.oauth_callback)
+      delete params.oauth_callback
+      params.oauth_token = token;
+      url.query = (url.query.length > 0 ? '&' : '') + URI.queryString(params);
+      location.href = url.build();
+   };
+
+   var doAllow = function ( params ) { authorize( goBack ); };
+   var doDecline = function ( params ) { decline( goBack ); };
+
+   $('#accept').click(function () {
+
+
+         login( doAllow );
+
+      });
+
+
+   $('#decline').click(function () {
+
+         login( doDecline );
+
+      });
+
+</script>
+</body>
+</html>
