@@ -1,12 +1,12 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD.
-        define(['jquery', 'underscore', 'backbone', 'base'], factory);
+        define(['jquery', 'underscore', 'backbone', 'base', 'simple-oauth'], factory);
     } else {
         // Browser globals
-        root.Backbone.OAuth = factory(root.$, root._, root.Backbone, Base);
+        root.Backbone.OAuth = factory(root.$, root._, root.Backbone, Base, SimpleOAuth);
     }
-}(this, function ($, _, Backbone, Base) {
+}(this, function ($, _, Backbone, Base, SimpleOAuth) {
 
    var AuthManager = (function() {
 
@@ -376,14 +376,14 @@
       rescue: function ( error ) {
 
          console.log('rescuing '+error);
-         if ( $.inArray( error, this.errors ) ) {
+         if ( _.contains( this.errors, error ) ) {
             if ( this.authorized() ) {
                this.renew_token();
             } else {
                console.log('rescue - authorizing!');
                this.reset();
             }
-         } else {
+         } else if ( this.authorizing() ) {
             this.trigger('oauth:failure');
          }
 
