@@ -1,6 +1,6 @@
 {
   "name": "backbone-oauth",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "ignore": [
     "src",
     "tests",

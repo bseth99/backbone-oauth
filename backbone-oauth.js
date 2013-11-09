@@ -179,12 +179,14 @@
       *  Force authorization cycle to begin at the beginning.
       *
       */
-      reset: function () {
+      reset: function ( silent ) {
          this.state = 1;
          this.keys.token = this.keys.token_secret = '';
          this.persist();
          this.prepare();
-         this.trigger('oauth:reset');
+
+         if ( !silent )
+            this.trigger('oauth:reset');
       },
 
       /*
@@ -262,6 +264,7 @@
          if (this.keys && this.namespace) {
             this.restore();
             this.prepare();
+            this.trigger( 'oauth:ready', this.adapter.data() );
          }
       },
 
