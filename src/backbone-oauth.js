@@ -264,6 +264,7 @@
          if (this.keys && this.namespace) {
             this.restore();
             this.prepare();
+            this.trigger( 'oauth:ready', this.adapter.data() );
          }
       },
 
