@@ -12,11 +12,34 @@
 
          var _registry = {};
 
+         function rewrite( base, path ) {
+            if ( !base ) return path;
+
+            var bsl = base.split( '/' ).reverse(),
+                psl = path.split( '/' ),
+                fn = [], idx = 0;
+
+            bsl = _.compact( _.filter( bsl, function( p ) { return p.length > 0 ? p : null; } ) );
+            psl = _.compact( _.filter( psl, function( p ) { return p.length > 0 ? p : null; } ) );
+
+            _.each( bsl, function( b ) {
+               if ( b != psl[idx] )
+                  fn.unshift( b );
+               else
+                  idx++;
+            });
+
+            fn.push.apply( fn, psl );
+
+            return '/'+fn.join( '/' );
+         }
+
          function resolve( path ) {
             return (
                _.chain(_registry)
                   .filter( function (oa, ns) {
-                        return path.indexOf('/'+ns) > -1;
+                        var test = rewrite( oa.basepath, path );
+                        return test.indexOf('/'+ns) > -1;
                      })
                   .first()
                   .value()
@@ -29,7 +52,7 @@
                 request = {
                      type: settings.type,
                      path: base,
-                     url: settings.url,
+                     url: rewrite( auth.basepath, settings.url ),
                      data: (settings.contentType.indexOf('application/x-www-form-urlencoded') > -1 ? URI.parseQuery(settings.data || '') : null),
                      headers: {}
                   };
@@ -53,6 +76,7 @@
                   }
                }
             });
+
 
          $(document).ajaxError(
                function(event, jqXHR, settings, exception) {
@@ -110,6 +134,13 @@
 
          this.initialize(options);
       },
+
+      /*
+      *  Make sure all requests have this path prepended.
+      *  Merges the current path to ensure no duplication.
+      *
+      */
+      basepath: null,
 
       /*
       *  Set these to the correct end-point for the service
@@ -243,6 +274,7 @@
          this.keys = options.keys;
          this.urls = options.urls || {};
          this.namespace = options.namespace;
+         this.basepath = options.basepath;
          this.errors = options.errors || []; //400, 401
          this.scheme = options.scheme || 'header';
          this.rewrite = options.rewrite || '/'+this.namespace;
