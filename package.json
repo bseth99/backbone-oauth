@@ -2,7 +2,7 @@
    "name": "Backbone-OAuth",
    "title": "Implement OAuth authorization flow and add verification headers",
    "description": "Seemlessly adds OAuth handling abilities to Backbone collections and models",
-   "version": "0.0.4",
+   "version": "0.0.5",
    "author": {
       "name": "Ben Olson",
       "url": "http://bseth99.github.com/"
