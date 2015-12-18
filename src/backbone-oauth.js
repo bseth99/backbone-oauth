@@ -13,6 +13,17 @@
          var _registry = {};
 
          function rewrite( base, path ) {
+
+            var uri = URI.parseUri( path ),
+                query;
+
+            if ( uri.query ) {
+               // queries with space are converting to +, not %20
+               // server will see %20 for a space, so clean that up here
+               uri.query = URI.queryString( URI.parseQuery( uri.query.replace( /\+/g, ' ' ) ) );
+               path = uri.build();
+            }
+
             if ( !base ) return path;
 
             var bsl = base.split( '/' ).reverse(),
