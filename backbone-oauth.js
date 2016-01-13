@@ -60,10 +60,11 @@
          function inject(jqXHR, settings, auth) {
 
             var base = location.protocol + '//' + location.host,
+                url = ( auth.location && base != auth.location ) ? auth.location : '',
                 request = {
                      type: settings.type,
-                     path: base,
-                     url: rewrite( auth.basepath, settings.url ),
+                     path: ( url.length > 0 ? '' : base ),
+                     url: url + rewrite( auth.basepath, settings.url ),
                      data: (settings.contentType.indexOf('application/x-www-form-urlencoded') > -1 ? URI.parseQuery(settings.data || '') : null),
                      headers: {}
                   };
@@ -192,6 +193,14 @@
       site: null,
 
       /*
+      *  API end point base URL.  If its not the same as
+      *  the location of the web-site.  This will require
+      *  CORS to be setup properly on the server
+      *
+      */
+      location: null,
+
+      /*
       *  When signing requests, remove the matching expression
       *  from the path.  These most likely will be the namespace
       *  hook but depending on the end-point, might need some
@@ -290,6 +299,7 @@
          this.scheme = options.scheme || 'header';
          this.rewrite = options.rewrite || '/'+this.namespace;
          this.site = options.site;
+         this.location = options.location;
          this.adapter = options.adapter || new Backbone.OAuth.Adapter();
 
          if (this.keys && this.namespace) {
